@@ -1,0 +1,15 @@
+src/data/.npm
+src/data/node_modules
+src/data/projects
+src/data/.config.nodes.json
+src/data/.config.nodes.json.backup
+src/data/.config.projects.json
+src/data/.config.projects.json.backup
+src/data/.config.users.json
+src/data/.config.users.json.backup
+src/data/.erp-connector
+src/data/.flows_cred.json.backup
+src/data/.flows.json.backup
+src/data/.sessions.json
+src/data/systems.json.backup
+src/data/flows_cred.json

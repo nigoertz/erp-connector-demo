@@ -1,0 +1,26 @@
+FROM nodered/node-red:3.1.3
+#:latest-14
+
+LABEL "authors"="Cpro IoT Connect"
+LABEL org.label-schema.schema-version="5.0.0"
+LABEL org.label-schema.description="ERP Connector"
+LABEL org.label-schema.name="docker.cpronect.de/erp-connector"
+LABEL org.label-schema.version="5.0.0"
+LABEL org.label-schema.url="https://www.cpro-iot.de"
+LABEL org.label-schema.vcs-url="https://docker.cpronect.de/erp-connector"
+LABEL org.label-schema.vendor="Cpro IoT Connect GmbH"
+
+### Setup Step: Create all necessary directories, permissions and settings ###
+USER root
+WORKDIR /cpro-erp-connector/src
+COPY . .
+RUN chmod -R 777 ./scripts
+RUN ./scripts/init.sh
+EXPOSE 3199
+
+# Execution Step: Switch back to default user and run install scripts
+USER node-red
+WORKDIR /usr/src/node-red
+RUN /cpro-erp-connector/src/scripts/install.sh
+
+ENTRYPOINT [ "/cpro-erp-connector/src/scripts/entrypoint-custom.sh" ]

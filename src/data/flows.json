@@ -1,0 +1,815 @@
+[
+    {
+        "id": "2e8c7f5c.ab73d",
+        "type": "tab",
+        "label": "smartERP Connector Demo",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "a1402dde54fd391c",
+        "type": "group",
+        "z": "2e8c7f5c.ab73d",
+        "name": "Reading Items Into Client For Monitoring",
+        "style": {
+            "fill": "#d1d1d1",
+            "label": true,
+            "fill-opacity": "0.36",
+            "color": "#000000",
+            "stroke": "#6f2fa0"
+        },
+        "nodes": [
+            "c9e199522719bf2d",
+            "4e04b9ebe6c35849",
+            "b14e218597a34746",
+            "d584b1f4f49e8159",
+            "ede6b0dd58c53f64",
+            "40027f5be0b192b5",
+            "ad1da09f64a5e079",
+            "06d0d0c2d3f84332",
+            "996654348e83ceda",
+            "e11fdea51cbfe433",
+            "7dcece25f769c32e",
+            "eb24908219a29492",
+            "ddab6fe97b471101",
+            "ce48ecb38525cf9a",
+            "e1519dbb552aa457",
+            "581818b77303b1d9",
+            "237495ea0f52c439",
+            "75a05de38dbd0f81",
+            "c2bbf4fe3ccd5ce9",
+            "9895e8a0f479dbc3",
+            "d727c3a989584138",
+            "f1938d059d9ce0f7",
+            "4df1e9f8fcdd2412",
+            "b41e8df411f02cab"
+        ],
+        "x": 34,
+        "y": 279,
+        "w": 1652,
+        "h": 522
+    },
+    {
+        "id": "8f020398cbeff37f",
+        "type": "group",
+        "z": "2e8c7f5c.ab73d",
+        "name": "OPC UA Server & Generating Values",
+        "style": {
+            "fill": "#d1d1d1",
+            "label": true,
+            "fill-opacity": "0.36",
+            "color": "#000000",
+            "stroke": "#6f2fa0"
+        },
+        "nodes": [
+            "eea020c4.58aa",
+            "11876179.c98d97",
+            "38ce10de.7d8c"
+        ],
+        "x": 34,
+        "y": 19,
+        "w": 412,
+        "h": 142
+    },
+    {
+        "id": "e3ca01e6b976b374",
+        "type": "group",
+        "z": "2e8c7f5c.ab73d",
+        "name": "smartERP Connector Monitoring",
+        "style": {
+            "fill": "#d1d1d1",
+            "label": true,
+            "fill-opacity": "0.36",
+            "color": "#000000",
+            "stroke": "#6f2fa0"
+        },
+        "nodes": [
+            "5b8c6e121688a0b5"
+        ],
+        "x": 34,
+        "y": 179,
+        "w": 252,
+        "h": 82
+    },
+    {
+        "id": "1181e8abca1e5ce8",
+        "type": "group",
+        "z": "2e8c7f5c.ab73d",
+        "name": "Get SAP Production Orders",
+        "style": {
+            "fill": "#d1d1d1",
+            "label": true,
+            "fill-opacity": "0.36",
+            "color": "#000000",
+            "stroke": "#6f2fa0"
+        },
+        "nodes": [
+            "da71a2d12bbefeab",
+            "897d185c57fbea30",
+            "985717aff128ad80",
+            "52e432cc0f838c0d",
+            "407d7a26c124d573"
+        ],
+        "x": 474,
+        "y": 19,
+        "w": 512,
+        "h": 202
+    },
+    {
+        "id": "03082678a89d2931",
+        "type": "OpcUa-Endpoint",
+        "endpoint": "opc.tcp://127.0.0.1:4840",
+        "secpol": "None",
+        "secmode": "None",
+        "none": true,
+        "login": false,
+        "usercert": false,
+        "usercertificate": "",
+        "userprivatekey": ""
+    },
+    {
+        "id": "38ce10de.7d8c",
+        "type": "opcua-compact-server",
+        "z": "2e8c7f5c.ab73d",
+        "g": "8f020398cbeff37f",
+        "port": "4840",
+        "endpoint": "",
+        "productUri": "",
+        "acceptExternalCommands": true,
+        "maxAllowedSessionNumber": "10",
+        "maxConnectionsPerEndpoint": "10",
+        "maxAllowedSubscriptionNumber": "100",
+        "alternateHostname": "",
+        "name": "",
+        "showStatusActivities": false,
+        "showErrors": true,
+        "allowAnonymous": true,
+        "individualCerts": false,
+        "isAuditing": false,
+        "serverDiscovery": true,
+        "users": [],
+        "xmlsetsOPCUA": [],
+        "publicCertificateFile": "",
+        "privateCertificateFile": "",
+        "registerServerMethod": "2",
+        "discoveryServerEndpointUrl": "opc.tcp://host.docker.internal:4840",
+        "capabilitiesForMDNS": "",
+        "maxNodesPerRead": 1000,
+        "maxNodesPerWrite": 1000,
+        "maxNodesPerHistoryReadData": 100,
+        "maxNodesPerBrowse": 3000,
+        "maxBrowseContinuationPoints": "10",
+        "maxHistoryContinuationPoints": "10",
+        "delayToInit": "1000",
+        "delayToClose": "200",
+        "serverShutdownTimeout": "100",
+        "addressSpaceScript": "function constructAlarmAddressSpace(server, addressSpace, eventObjects, done) {\n  const opcua = coreServer.choreCompact.opcua;\n  const LocalizedText = opcua.LocalizedText;\n  const namespace = addressSpace.getOwnNamespace();\n  const Variant = opcua.Variant;\n  const DataType = opcua.DataType;\n  const DataValue = opcua.DataValue;\n  const flexServerInternals = this;\n\n  // devices\n  const rootFolder = addressSpace.findNode(\"RootFolder\");\n  const devices = namespace.addFolder(rootFolder.objects, {\n    \"browseName\": \"Smart Industrial Equipment\"\n  });\n\n  // smartPump\n  const smartPumpFolder = namespace.addFolder(devices, {\n    \"browseName\": \"Smart Pump\"\n  });\n  const smartPumpTempSensors = namespace.addFolder(smartPumpFolder, {\n    \"browseName\": \"Temperature Sensors\"\n  });\n  const smartPumpPressureSensors = namespace.addFolder(smartPumpFolder, {\n    \"browseName\": \"Pressure Sensors\"\n  });\n  const smartPumpFlowSensors = namespace.addFolder(smartPumpFolder, {\n    \"browseName\": \"Flow Sensors\"\n  });\n  const smartPumpTempSensor1 = namespace.addVariable({\n    \"organizedBy\": smartPumpTempSensors,\n    \"browseName\": \"Temperature Sensor 1\",\n    \"nodeId\": \"ns=1;s=pumpTempSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"pumpTempSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"pumpTempSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const smartPumpTempSensor2 = namespace.addVariable({\n    \"organizedBy\": smartPumpTempSensors,\n    \"browseName\": \"Temperature Sensor 2\",\n    \"nodeId\": \"ns=1;s=pumpTempSensor2\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"pumpTempSensor2\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"pumpTempSensor2\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const smartPumpPressureSensor1 = namespace.addVariable({\n    \"organizedBy\": smartPumpPressureSensors,\n    \"browseName\": \"Pressure Sensor 1\",\n    \"nodeId\": \"ns=1;s=pumpPressureSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"pumpPressureSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"pumpPressureSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const smartPumpFlowSensor1 = namespace.addVariable({\n    \"organizedBy\": smartPumpFlowSensors,\n    \"browseName\": \"Flow Sensor 1\",\n    \"nodeId\": \"ns=1;s=pumpFlowSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"pumpFlowSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"pumpFlowSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const viewSmartPump = namespace.addView({\n    \"organizedBy\": rootFolder.views,\n    \"browseName\": \"Devices-Smart-Pump\"\n  });\n  viewSmartPump.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartPumpTempSensor1.nodeId\n  });\n  viewSmartPump.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartPumpTempSensor2.nodeId\n  });\n  viewSmartPump.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartPumpPressureSensor1.nodeId\n  });\n  viewSmartPump.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartPumpFlowSensor1.nodeId\n  });\n\n  // smartTurbine\n  const smartTurbineFolder = namespace.addFolder(devices, {\n    \"browseName\": \"Smart Turbine\"\n  });\n  const smartTurbineTempSensors = namespace.addFolder(smartTurbineFolder, {\n    \"browseName\": \"Temperature Sensors\"\n  });\n  const smartTurbineVibSensors = namespace.addFolder(smartTurbineFolder, {\n    \"browseName\": \"Vibration Sensors\"\n  });\n  const smartTurbineRpmSensors = namespace.addFolder(smartTurbineFolder, {\n    \"browseName\": \"Rotational speed sensor\"\n  });\n  const smartTurbineTempSensor1 = namespace.addVariable({\n    \"organizedBy\": smartTurbineTempSensors,\n    \"browseName\": \"Temperature Sensor 1\",\n    \"nodeId\": \"ns=1;s=turbineTempSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"turbineTempSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"turbineTempSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const smartTurbineVibSensor1 = namespace.addVariable({\n    \"organizedBy\": smartTurbineVibSensors,\n    \"browseName\": \"Vibration Sensor 1\",\n    \"nodeId\": \"ns=1;s=turbineVibSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"turbineVibSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"turbineVibSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const smartTurbineRpmSensor1 = namespace.addVariable({\n    \"organizedBy\": smartTurbineRpmSensors,\n    \"browseName\": \"RPM Sensor 1\",\n    \"nodeId\": \"ns=1;s=turbineRpmSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"turbineRpmSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"turbineRpmSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const viewSmartTurbine = namespace.addView({\n    \"organizedBy\": rootFolder.views,\n    \"browseName\": \"Devices-Smart-Turbine\"\n  });\n  viewSmartTurbine.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartTurbineTempSensor1.nodeId\n  });\n  viewSmartTurbine.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartTurbineVibSensor1.nodeId\n  });\n  viewSmartTurbine.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartTurbineRpmSensor1.nodeId\n  });\n\n  // smartConveyor\n  const smartConveyorFolder = namespace.addFolder(devices, {\n    \"browseName\": \"Smart Conveyor\"\n  });\n  const smartConveyorSpeedSensors = namespace.addFolder(smartConveyorFolder, {\n    \"browseName\": \"Speed Sensors\"\n  });\n  const smartConveyorSpeedSensor1 = namespace.addVariable({\n    \"organizedBy\": smartConveyorSpeedSensors,\n    \"browseName\": \"Speed Sensor 1\",\n    \"nodeId\": \"ns=1;s=conveyorSpeedSensor1\",\n    \"dataType\": \"Double\",\n    \"value\": {\n      \"get\": function () {\n        return new Variant({\n          \"dataType\": DataType.Double,\n          \"value\": flexServerInternals.sandboxFlowContext.get(\"conveyorSpeedSensor1\")\n        });\n      },\n      \"set\": function (variant) {\n        flexServerInternals.sandboxFlowContext.set(\n          \"conveyorSpeedSensor1\",\n          parseFloat(variant.value)\n        );\n        return opcua.StatusCodes.Good;\n      }\n    }\n  });\n  const viewSmartConveyor = namespace.addView({\n    \"organizedBy\": rootFolder.views,\n    \"browseName\": \"Devices-Smart-Conveyor\"\n  });\n  viewSmartConveyor.addReference({\n    \"referenceType\": \"Organizes\",\n    \"nodeId\": smartConveyorSpeedSensor1.nodeId\n  });\n\n  done();\n}",
+        "x": 160,
+        "y": 120,
+        "wires": []
+    },
+    {
+        "id": "eea020c4.58aa",
+        "type": "inject",
+        "z": "2e8c7f5c.ab73d",
+        "g": "8f020398cbeff37f",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "",
+        "payload": "",
+        "payloadType": "str",
+        "x": 130,
+        "y": 60,
+        "wires": [
+            [
+                "11876179.c98d97"
+            ]
+        ]
+    },
+    {
+        "id": "11876179.c98d97",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "8f020398cbeff37f",
+        "name": "Set sensor values",
+        "func": "flow.set('pumpTempSensor1', (Math.random() + 11.0).toFixed(2))\nflow.set('pumpTempSensor2', (Math.random() + 12.0).toFixed(2))\nflow.set('pumpPressureSensor1', (Math.random() + 13.0).toFixed(2))\nflow.set('pumpFlowSensor1', (Math.random() + 14.0).toFixed(2))\n\nflow.set('turbineTempSensor1', (Math.random() + 15.0).toFixed(2))\nflow.set('turbineVibSensor1', (Math.random() + 16.0).toFixed(2))\nflow.set('turbineRpmSensor1', (Math.random() + 17.0).toFixed(2))\n\nflow.set('conveyorSpeedSensor1', (Math.random() + 18.0).toFixed(2))\n\nmsg.payload = \"\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 330,
+        "y": 60,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "c9e199522719bf2d",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=pumpFlowSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "pumpFlowSensor1",
+        "x": 430,
+        "y": 480,
+        "wires": [
+            [
+                "75a05de38dbd0f81"
+            ]
+        ]
+    },
+    {
+        "id": "4e04b9ebe6c35849",
+        "type": "OpcUa-Client",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "endpoint": "03082678a89d2931",
+        "action": "read",
+        "deadbandtype": "a",
+        "deadbandvalue": 1,
+        "time": 10,
+        "timeUnit": "s",
+        "certificate": "n",
+        "localfile": "",
+        "localkeyfile": "",
+        "securitymode": "None",
+        "securitypolicy": "None",
+        "useTransport": false,
+        "maxChunkCount": 1,
+        "maxMessageSize": 8192,
+        "receiveBufferSize": 8192,
+        "sendBufferSize": 8192,
+        "name": "",
+        "x": 1020,
+        "y": 540,
+        "wires": [
+            [
+                "4df1e9f8fcdd2412"
+            ],
+            []
+        ]
+    },
+    {
+        "id": "b14e218597a34746",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=pumpTempSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "pumpTempSensor1",
+        "x": 430,
+        "y": 360,
+        "wires": [
+            [
+                "ddab6fe97b471101"
+            ]
+        ]
+    },
+    {
+        "id": "d584b1f4f49e8159",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=pumpTempSensor2",
+        "datatype": "Double",
+        "value": "",
+        "name": "pumpTempSensor2",
+        "x": 430,
+        "y": 400,
+        "wires": [
+            [
+                "ce48ecb38525cf9a"
+            ]
+        ]
+    },
+    {
+        "id": "ede6b0dd58c53f64",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=pumpPressureSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "pumpPressureSensor1",
+        "x": 440,
+        "y": 440,
+        "wires": [
+            [
+                "237495ea0f52c439"
+            ]
+        ]
+    },
+    {
+        "id": "40027f5be0b192b5",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=turbineTempSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "turbineTempSensor1",
+        "x": 440,
+        "y": 580,
+        "wires": [
+            [
+                "c2bbf4fe3ccd5ce9"
+            ]
+        ]
+    },
+    {
+        "id": "ad1da09f64a5e079",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=turbineVibSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "turbineVibSensor1",
+        "x": 430,
+        "y": 620,
+        "wires": [
+            [
+                "9895e8a0f479dbc3"
+            ]
+        ]
+    },
+    {
+        "id": "06d0d0c2d3f84332",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=turbineRpmSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "turbineRpmSensor1",
+        "x": 440,
+        "y": 660,
+        "wires": [
+            [
+                "d727c3a989584138"
+            ]
+        ]
+    },
+    {
+        "id": "996654348e83ceda",
+        "type": "OpcUa-Item",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "item": "ns=1;s=conveyorSpeedSensor1",
+        "datatype": "Double",
+        "value": "",
+        "name": "conveyorSpeedSensor1",
+        "x": 450,
+        "y": 760,
+        "wires": [
+            [
+                "f1938d059d9ce0f7"
+            ]
+        ]
+    },
+    {
+        "id": "e11fdea51cbfe433",
+        "type": "comment",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "smartPump",
+        "info": "",
+        "x": 410,
+        "y": 320,
+        "wires": []
+    },
+    {
+        "id": "7dcece25f769c32e",
+        "type": "comment",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "smartTurbine",
+        "info": "",
+        "x": 410,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "eb24908219a29492",
+        "type": "comment",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "smartConveyor",
+        "info": "",
+        "x": 420,
+        "y": 720,
+        "wires": []
+    },
+    {
+        "id": "5b8c6e121688a0b5",
+        "type": "monitor",
+        "z": "2e8c7f5c.ab73d",
+        "g": "e3ca01e6b976b374",
+        "name": "",
+        "ignore": "",
+        "mode": "mongo_cosmos_over_api",
+        "snapshotrecording": "all",
+        "x": 160,
+        "y": 220,
+        "wires": []
+    },
+    {
+        "id": "ddab6fe97b471101",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read pump temperature sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 360,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "ce48ecb38525cf9a",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read pump temperature sensor 2",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 400,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "e1519dbb552aa457",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Sort and rename sensor output",
+        "func": "// Get the payload from the message\nlet payload = msg.payload;\n\n// Define the desired order of keys and their new names\nconst keyMapping = {\n    'pumpTempSensor1': 'Pump temperature sensor 1',\n    'pumpTempSensor2': 'Pump temperature sensor 2',\n    'pumpPressureSensor1': 'Pump pressure sensor 1',\n    'pumpFlowSensor1': 'Pump flow sensor 1',\n    'turbineTempSensor1': 'Turbine temperature sensor 1',\n    'turbineVibSensor1': 'Turbine vibrations sensor 1',\n    'turbineRpmSensor1': 'Turbine rpm Sensor 1',\n    'conveyorSpeedSensor1': 'Conveyor speed sensor 1'\n};\n\n// Create a new object to hold the sorted and renamed entries\nlet sortedPayload = {};\n\n// Iterate over the keyMapping and populate the new object\nfor (let oldKey in keyMapping) {\n    let newKey = keyMapping[oldKey];\n    let fullKey = `ns=1;s=${oldKey}`;\n    \n    // If the full key exists in the original payload, add it to the sortedPayload\n    if (payload.hasOwnProperty(fullKey)) {\n        sortedPayload[newKey] = payload[fullKey];\n    }\n}\n\n// Set the sorted and renamed object as the new payload\nmsg.payload = sortedPayload;\n\n// Return the message\nreturn msg;\n",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 1370,
+        "y": 540,
+        "wires": [
+            [
+                "581818b77303b1d9"
+            ]
+        ]
+    },
+    {
+        "id": "581818b77303b1d9",
+        "type": "debug",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "debug 2",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1580,
+        "y": 540,
+        "wires": []
+    },
+    {
+        "id": "237495ea0f52c439",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read pump pressure sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 440,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "75a05de38dbd0f81",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read pump flow sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 690,
+        "y": 480,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "c2bbf4fe3ccd5ce9",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read turbine temperature sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 720,
+        "y": 580,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "9895e8a0f479dbc3",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read turbine vibration sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 620,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "d727c3a989584138",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read turbine rpm sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 700,
+        "y": 660,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "f1938d059d9ce0f7",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read conveyor speed sensor 1",
+        "func": "\nreturn msg;",
+        "outputs": 1,
+        "timeout": 0,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 710,
+        "y": 760,
+        "wires": [
+            [
+                "4e04b9ebe6c35849"
+            ]
+        ]
+    },
+    {
+        "id": "4df1e9f8fcdd2412",
+        "type": "join",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Join",
+        "mode": "custom",
+        "build": "object",
+        "property": "payload",
+        "propertyType": "msg",
+        "key": "topic",
+        "joiner": "\\n",
+        "joinerType": "str",
+        "accumulate": false,
+        "timeout": "",
+        "count": "8",
+        "reduceRight": false,
+        "reduceExp": "",
+        "reduceInit": "",
+        "reduceInitType": "",
+        "reduceFixup": "",
+        "x": 1170,
+        "y": 540,
+        "wires": [
+            [
+                "e1519dbb552aa457"
+            ]
+        ]
+    },
+    {
+        "id": "b41e8df411f02cab",
+        "type": "inject",
+        "z": "2e8c7f5c.ab73d",
+        "g": "a1402dde54fd391c",
+        "name": "Read OPC UA Items",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "0",
+        "topic": "",
+        "payload": "",
+        "payloadType": "date",
+        "x": 170,
+        "y": 520,
+        "wires": [
+            [
+                "b14e218597a34746",
+                "ede6b0dd58c53f64",
+                "c9e199522719bf2d",
+                "40027f5be0b192b5",
+                "ad1da09f64a5e079",
+                "06d0d0c2d3f84332",
+                "996654348e83ceda",
+                "d584b1f4f49e8159"
+            ]
+        ]
+    },
+    {
+        "id": "da71a2d12bbefeab",
+        "type": "inject",
+        "z": "2e8c7f5c.ab73d",
+        "g": "1181e8abca1e5ce8",
+        "name": "Get Production Orders",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": "1",
+        "topic": "Inject",
+        "payload": "{}",
+        "payloadType": "json",
+        "x": 620,
+        "y": 60,
+        "wires": [
+            [
+                "897d185c57fbea30"
+            ]
+        ]
+    },
+    {
+        "id": "897d185c57fbea30",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "1181e8abca1e5ce8",
+        "name": "Get SAP Production Order 1",
+        "func": "const prodOrder1 = {\n  \"ProductionOrder\": {\n    \"OrderNumber\": \"1000001234\",\n    \"OrderType\": \"PP01\",\n    \"Material\": \"MAT123456\",\n    \"MaterialDescription\": \"Produkt A\",\n    \"Plant\": \"PLANT01\",\n    \"OrderStatus\": \"REL\",  // REL = Released\n    \"PlannedStartDate\": \"2024-06-10\",\n    \"PlannedEndDate\": \"2024-06-15\",\n    \"ActualStartDate\": null,\n    \"ActualEndDate\": null,\n    \"Quantity\": 100,\n    \"UnitOfMeasure\": \"EA\",\n    \"WorkCenters\": [\n      {\n        \"WorkCenterID\": \"WC001\",\n        \"Description\": \"Montage\",\n        \"Capacity\": 10,\n        \"ScheduledStartTime\": \"2024-06-10T08:00:00\",\n        \"ScheduledEndTime\": \"2024-06-10T16:00:00\"\n      },\n      {\n        \"WorkCenterID\": \"WC002\",\n        \"Description\": \"Lackierung\",\n        \"Capacity\": 5,\n        \"ScheduledStartTime\": \"2024-06-11T08:00:00\",\n        \"ScheduledEndTime\": \"2024-06-11T16:00:00\"\n      }\n    ],\n    \"BillOfMaterials\": [\n      {\n        \"Component\": \"COMP001\",\n        \"Description\": \"Schraube\",\n        \"QuantityRequired\": 200,\n        \"QuantityIssued\": 0,\n        \"UnitOfMeasure\": \"PCS\"\n      },\n      {\n        \"Component\": \"COMP002\",\n        \"Description\": \"Blech\",\n        \"QuantityRequired\": 50,\n        \"QuantityIssued\": 0,\n        \"UnitOfMeasure\": \"KG\"\n      }\n    ],\n    \"Routing\": [\n      {\n        \"OperationNumber\": 10,\n        \"Description\": \"Schneiden\",\n        \"WorkCenterID\": \"WC001\",\n        \"StandardDuration\": \"02:00:00\",\n        \"ActualDuration\": null\n      },\n      {\n        \"OperationNumber\": 20,\n        \"Description\": \"Biegen\",\n        \"WorkCenterID\": \"WC002\",\n        \"StandardDuration\": \"03:00:00\",\n        \"ActualDuration\": null\n      }\n    ],\n    \"GoodsMovements\": [\n      {\n        \"MovementType\": \"261\",\n        \"Material\": \"COMP001\",\n        \"Quantity\": 200,\n        \"UnitOfMeasure\": \"PCS\",\n        \"PostingDate\": \"2024-06-10\",\n        \"MovementStatus\": \"Posted\"\n      }\n    ],\n    \"Costing\": {\n      \"PlannedCost\": 5000.00,\n      \"ActualCost\": null,\n      \"Currency\": \"EUR\"\n    },\n    \"Notes\": \"Dringende Bestellung\"\n  }\n}\n\nmsg.topic = \"Plant01\"\nmsg.payload = prodOrder1;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 100,
+        "wires": [
+            [
+                "985717aff128ad80"
+            ]
+        ]
+    },
+    {
+        "id": "985717aff128ad80",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "1181e8abca1e5ce8",
+        "name": "Get SAP Production Order 2",
+        "func": "const prodOrder2 = {\n  \"ProductionOrder\": {\n    \"OrderNumber\": \"1000005678\",\n    \"OrderType\": \"PP02\",\n    \"Material\": \"MAT789012\",\n    \"MaterialDescription\": \"Produkt B\",\n    \"Plant\": \"PLANT02\",\n    \"OrderStatus\": \"CRTD\",  // CRTD = Created\n    \"PlannedStartDate\": \"2024-07-01\",\n    \"PlannedEndDate\": \"2024-07-05\",\n    \"ActualStartDate\": null,\n    \"ActualEndDate\": null,\n    \"Quantity\": 250,\n    \"UnitOfMeasure\": \"EA\",\n    \"WorkCenters\": [\n      {\n        \"WorkCenterID\": \"WC101\",\n        \"Description\": \"Schweißen\",\n        \"Capacity\": 15,\n        \"ScheduledStartTime\": \"2024-07-01T08:00:00\",\n        \"ScheduledEndTime\": \"2024-07-01T17:00:00\"\n      },\n      {\n        \"WorkCenterID\": \"WC102\",\n        \"Description\": \"Polieren\",\n        \"Capacity\": 10,\n        \"ScheduledStartTime\": \"2024-07-02T08:00:00\",\n        \"ScheduledEndTime\": \"2024-07-02T17:00:00\"\n      }\n    ],\n    \"BillOfMaterials\": [\n      {\n        \"Component\": \"COMP101\",\n        \"Description\": \"Bolzen\",\n        \"QuantityRequired\": 500,\n        \"QuantityIssued\": 0,\n        \"UnitOfMeasure\": \"PCS\"\n      },\n      {\n        \"Component\": \"COMP102\",\n        \"Description\": \"Platte\",\n        \"QuantityRequired\": 100,\n        \"QuantityIssued\": 0,\n        \"UnitOfMeasure\": \"KG\"\n      }\n    ],\n    \"Routing\": [\n      {\n        \"OperationNumber\": 10,\n        \"Description\": \"Schweißen\",\n        \"WorkCenterID\": \"WC101\",\n        \"StandardDuration\": \"04:00:00\",\n        \"ActualDuration\": null\n      },\n      {\n        \"OperationNumber\": 20,\n        \"Description\": \"Polieren\",\n        \"WorkCenterID\": \"WC102\",\n        \"StandardDuration\": \"03:30:00\",\n        \"ActualDuration\": null\n      }\n    ],\n    \"GoodsMovements\": [\n      {\n        \"MovementType\": \"261\",\n        \"Material\": \"COMP101\",\n        \"Quantity\": 500,\n        \"UnitOfMeasure\": \"PCS\",\n        \"PostingDate\": \"2024-07-01\",\n        \"MovementStatus\": \"Planned\"\n      }\n    ],\n    \"Costing\": {\n      \"PlannedCost\": 12000.00,\n      \"ActualCost\": null,\n      \"Currency\": \"EUR\"\n    },\n    \"Notes\": \"Auftragsnummer mit hoher Priorität\"\n  }\n}\n\nmsg.payload = prodOrder2;\nmsg.topic = \"Plant02\"\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 140,
+        "wires": [
+            [
+                "52e432cc0f838c0d"
+            ]
+        ]
+    },
+    {
+        "id": "52e432cc0f838c0d",
+        "type": "function",
+        "z": "2e8c7f5c.ab73d",
+        "g": "1181e8abca1e5ce8",
+        "name": "Get SAP Production Order 3",
+        "func": "const prodOrder3 = {\n  \"ProductionOrder\": {\n    \"OrderNumber\": \"1000008910\",\n    \"OrderType\": \"PP03\",\n    \"Material\": \"MAT345678\",\n    \"MaterialDescription\": \"Produkt C\",\n    \"Plant\": \"PLANT03\",\n    \"OrderStatus\": \"CONF\",  // CONF = Confirmed\n    \"PlannedStartDate\": \"2024-08-15\",\n    \"PlannedEndDate\": \"2024-08-20\",\n    \"ActualStartDate\": \"2024-08-15\",\n    \"ActualEndDate\": null,\n    \"Quantity\": 150,\n    \"UnitOfMeasure\": \"EA\",\n    \"WorkCenters\": [\n      {\n        \"WorkCenterID\": \"WC201\",\n        \"Description\": \"Zusammenbau\",\n        \"Capacity\": 20,\n        \"ScheduledStartTime\": \"2024-08-15T07:00:00\",\n        \"ScheduledEndTime\": \"2024-08-15T15:00:00\"\n      },\n      {\n        \"WorkCenterID\": \"WC202\",\n        \"Description\": \"Testen\",\n        \"Capacity\": 8,\n        \"ScheduledStartTime\": \"2024-08-16T07:00:00\",\n        \"ScheduledEndTime\": \"2024-08-16T15:00:00\"\n      }\n    ],\n    \"BillOfMaterials\": [\n      {\n        \"Component\": \"COMP201\",\n        \"Description\": \"Gehäuse\",\n        \"QuantityRequired\": 150,\n        \"QuantityIssued\": 0,\n        \"UnitOfMeasure\": \"PCS\"\n      },\n      {\n        \"Component\": \"COMP202\",\n        \"Description\": \"Schalter\",\n        \"QuantityRequired\": 150,\n        \"QuantityIssued\": 0,\n        \"UnitOfMeasure\": \"PCS\"\n      }\n    ],\n    \"Routing\": [\n      {\n        \"OperationNumber\": 10,\n        \"Description\": \"Zusammenbau\",\n        \"WorkCenterID\": \"WC201\",\n        \"StandardDuration\": \"05:00:00\",\n        \"ActualDuration\": null\n      },\n      {\n        \"OperationNumber\": 20,\n        \"Description\": \"Testen\",\n        \"WorkCenterID\": \"WC202\",\n        \"StandardDuration\": \"02:00:00\",\n        \"ActualDuration\": null\n      }\n    ],\n    \"GoodsMovements\": [\n      {\n        \"MovementType\": \"261\",\n        \"Material\": \"COMP201\",\n        \"Quantity\": 150,\n        \"UnitOfMeasure\": \"PCS\",\n        \"PostingDate\": \"2024-08-15\",\n        \"MovementStatus\": \"Planned\"\n      }\n    ],\n    \"Costing\": {\n      \"PlannedCost\": 7500.00,\n      \"ActualCost\": null,\n      \"Currency\": \"EUR\"\n    },\n    \"Notes\": \"Standardproduktion\"\n  }\n}\n\nmsg.topic = \"Plant03\"\nmsg.payload = prodOrder3;\nreturn msg;",
+        "outputs": 1,
+        "timeout": "",
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "libs": [],
+        "x": 640,
+        "y": 180,
+        "wires": [
+            [
+                "407d7a26c124d573"
+            ]
+        ]
+    },
+    {
+        "id": "407d7a26c124d573",
+        "type": "debug",
+        "z": "2e8c7f5c.ab73d",
+        "g": "1181e8abca1e5ce8",
+        "name": "debug 3",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "false",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 880,
+        "y": 180,
+        "wires": []
+    }
+]
