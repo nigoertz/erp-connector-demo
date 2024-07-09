@@ -3,6 +3,7 @@
  * @typedef {import('../../../data/config').CproConfig} CproConfig
  * @typedef {import('../../../data/config').Environment} Environment
  */
+const axios = require('axios');
 const { MongoClient, GridFSBucket } = require("mongodb");
 
 const {
@@ -196,6 +197,18 @@ function useApiStrategy(RED, node, cpro) {
     }
   }
 
+  registerMongoMonitorRoutes(RED, node, cpro);
+
+  axios.get(cpro.connector.monitorConfig.apiUrl + `/status`)
+  .then(response => {
+    node.monitor.status.connected = true;
+    node.monitor.status.connectedSince = new Date().getTime();
+    node.status({ fill: "green", shape: "dot", text: "Connected to API" });
+  })
+  .catch(error => {
+    node.status({ fill: "red", shape: "dot", text: "Could not connect to API" });
+  });
+ 
   RED.hooks.remove('preDeliver.monitor');
   RED.hooks.add('preDeliver.monitor', async (ev) => {
     if (['monitor', ...node.ignore].includes(ev?.source?.node?.type)) {
@@ -242,12 +255,6 @@ function useApiStrategy(RED, node, cpro) {
       await insertSnapshotToApi(node, snapshot)
     }
   });
-
-  registerMongoMonitorRoutes(RED, node, cpro);
-
-  node.monitor.status.connected = true;
-  node.monitor.status.connectedSince = new Date().getTime();
-  node.status({ fill: "green", shape: "dot", text: "Connected to API" });
 }
 
 module.exports = useApiStrategy;

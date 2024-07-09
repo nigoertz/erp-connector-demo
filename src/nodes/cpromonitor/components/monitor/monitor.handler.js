@@ -221,7 +221,6 @@ async function getTransactionsFromApi(node, req, res) {
 
     res.status(200).send(transactions);
   } catch (error) {
-    console.error("Error fetching transactions:", error);
     res.status(500).send({ msg: error.message });
   }
 }
@@ -229,7 +228,6 @@ async function getTransactionsFromApi(node, req, res) {
 async function getTransactionByIdFromApi(node, req, res) {
   try {
     const transactionId = req.params.transactionId;
-    //cproConfig.connector.monitorConfig.apiUrl
     const apiUrl = cproConfig.connector.monitorConfig.apiUrl + `/transactions/${transactionId}`;
     const response = await axios.get(apiUrl);
     const transaction = response.data;
@@ -241,15 +239,11 @@ async function getTransactionByIdFromApi(node, req, res) {
 
     res.status(200).send(transaction);
   } catch (error) {
-    console.error("Error fetching transaction by ID:", error);
     res.status(500).send({ msg: error.message });
   }
 }
 
 async function getTransactionSnapshotsFromApi(node, req, res) {
-
-  console.log("getTransactionSnapshotsFromApi")
-
   try {
     const transactionId = req.params.transactionId;
     const apiUrl = cproConfig.connector.monitorConfig.apiUrl + `/transactions/${transactionId}/snapshots`;
@@ -263,7 +257,6 @@ async function getTransactionSnapshotsFromApi(node, req, res) {
 
     res.status(200).send(snapshots);
   } catch (error) {
-    console.error("Error fetching snapshots for transaction:", error);
     res.status(500).send({ msg: error.message });
   }
 }
@@ -292,38 +285,16 @@ async function getSnapshotByIdFromApi(node, req, res) {
     }
   }
 
-  async function getSnapshotFromCollection(node, req, res) {
-    
+  async function getSnapshotFromCollection(node, req, res) {  
     try {
       const snapshotId = req.params.id
       const apiUrl = cproConfig.connector.monitorConfig.apiUrl + `/snapshots/${snapshotId}`;
       const response = await axios.get(apiUrl);
       const snapshots = response.data;
-  
-      console.log(snapshots)
       res.status(200).send(snapshots);
-
-
     } catch (error) {
-      console.error("Error fetching snapshot:", error);
       res.status(500).send({ msg: error.message });
     }
-    
-
-    /*
-    try {
-      const collection = node.monitor.snapshotCollection;
-      console.log(collection);
-      const snapshots = await collection.find({ id: req.params.id }).toArray();
-      if (snapshots.length === 0) {
-        res.status(404).send({ msg: "Snapshot not found" });
-        return;
-      }
-      res.status(200).send(snapshots[0]);
-    } catch (error) {
-      throw new Error(error);
-    }
-    */
   }
 
   try {
@@ -357,7 +328,6 @@ async function insertStepToApi(node, step, { recordSnapshot }) {
 
 async function insertSnapshotToApi(node, snapshot) {
   try {
-    console.log(snapshot)
     await axios.post(cproConfig.connector.monitorConfig.apiUrl + "/snapshots", snapshot);
     node.status({ fill: "green", shape: "dot", text: "Snapshot inserted" });
   } catch (error) {
@@ -518,6 +488,7 @@ module.exports = {
   insertLogs,
   querySnapshots,
   insertSnapshot,
+
   insertTransactionToApi,
   insertStepToApi,
   insertLogsToApi,
