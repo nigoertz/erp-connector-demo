@@ -183,9 +183,9 @@
                 "vt": "str"
             }
         ],
-        "repeat": "",
+        "repeat": "20",
         "crontab": "",
-        "once": false,
+        "once": true,
         "onceDelay": "1",
         "topic": "",
         "payload": "",
@@ -680,14 +680,14 @@
                 "vt": "str"
             }
         ],
-        "repeat": "",
+        "repeat": "30",
         "crontab": "",
         "once": false,
         "onceDelay": "0",
         "topic": "",
         "payload": "",
         "payloadType": "date",
-        "x": 170,
+        "x": 180,
         "y": 520,
         "wires": [
             [
@@ -717,14 +717,14 @@
                 "vt": "str"
             }
         ],
-        "repeat": "",
+        "repeat": "30",
         "crontab": "",
         "once": false,
         "onceDelay": "1",
         "topic": "Inject",
         "payload": "{}",
         "payloadType": "json",
-        "x": 620,
+        "x": 630,
         "y": 60,
         "wires": [
             [
