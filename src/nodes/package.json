@@ -11,7 +11,6 @@
   "license": "ISC",
   "node-red": {
     "nodes": {
-      "openapi": "openapi/openapi.js",
       "cpromonitor": "cpromonitor/cpromonitor.js"
     }
   },

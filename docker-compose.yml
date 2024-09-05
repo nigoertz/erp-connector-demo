@@ -12,7 +12,7 @@ services:
       ENVIRONMENT: 'dev' # 'dev' or 'prod'
       EXTERNAL_MODULES_ALLOW_INSTALL: 'true'
       MONGO_SNAPSHOT_STRATEGY: 'collection' # or 'gridfs' for larger files
-      MONITOR_API_URL: http://host.docker.internal:8000
+      MONITOR_API_URL: https://connector-api.cproiot-portal.com
     # env_file:
     #   - .env # Use a custom .env file
     ports:

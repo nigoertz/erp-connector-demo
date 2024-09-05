@@ -422,10 +422,10 @@ module.exports = {
              * added to the end of the palette.
              * If not set, the following default order is used:
              */
-            categories: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
-            
+            //categories: ['subflows', 'common', 'function', 'network', 'sequence', 'parser', 'storage'],
             catalogues: [   // Alternative palette manager catalogues
-                'https://catalogue.nodered.org/catalogue.json'
+                'https://catalogue.nodered.org/catalogue.json',
+                `${cproConfig.connector.httpPublicUrl}${cproConfig.connector.httpNodeRoot}${cproConfig.catalogue.path}`,
             ]
         },
 

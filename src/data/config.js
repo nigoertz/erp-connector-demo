@@ -1,6 +1,9 @@
 const path = require('path');
 const bcrypt = require('bcrypt');
 
+// Load systems
+/** @type {SystemConfig} */
+const systems = require('./systems.json');
 const fs = require('fs');
 
 // Initialize environment
@@ -34,19 +37,26 @@ const logFsPath = process.env.LOGGING_FS_PATH || path.join('/', 'var', 'log', 'c
 const logFsPathWarn = path.join(logFsPath, 'warning.log')
 const logHttpPath = (process.env.LOGGING_HTTP_PATH || '/cpro/logs')
 
-// OpenAPI consts
-const httpOpenapiUi = (process.env.HTTP_OPENAPI_UI || '/cpro/docs/index.html')
-const httpOpenapiAssets = (process.env.HTTP_OPENAPI_ASSETS || '/cpro/docs/assets');
-const httpOpenapiJson = (process.env.HTTP_OPENAPI_JSON || '/cpro/docs/json')
+// Cpro Settings & Systems consts
+const httpCproSettingsPath = (process.env.HTTP_CPRO_SETTINGS_PATH || '/cpro/settings')
+const httpCproSystemSettingsPath = (process.env.HTTP_CPRO_SYSTEM_SETTINGS_PATH || '/cpro/settings/systems')
+const systemsFsPath = process.env.SYSTEMS_FS_PATH || path.join('/', 'data', 'systems.json');
+const systemsBackupFsPath = process.env.SYSTEMS_BACKUP_FS_PATH || path.join('/', 'data', 'systems.json.backup');
+const systemsFactoryFsPath = process.env.SYSTEMS_BACKUP_FS_PATH || path.join('/', 'data', 'factory.systems.json');
+
+// Cpro Node Catalogue consts
+const httpCproNodeCataloguePath = (process.env.HTTP_CPRO_NODE_CATALOGUE_PATH || '/cpro/nodes/catalogue')
+const httpCproNodeCatalogueUser = (process.env.HTTP_CPRO_NODE_CATALOGUE_USER || 'admin'); // Username for Nexus repository
+const httpCproNodeCataloguePassword = (process.env.HTTP_CPRO_NODE_CATALOGUE_PASSWORD || 'admin'); // Password for Nexus repository
 
 // Monitor consts
 const monitorHttpPath = process.env.MONITOR_HTTP_PATH || '/cpro/monitor';
 const monitorHost = process.env.MONITOR_HOST || "mongo";
 const monitorDbUsername = getSecretOrEnv('MONITOR_DB_USERNAME', 'mongo');
 const monitorDbPassword = getSecretOrEnv('MONITOR_DB_PASSWORD', 'mongo');
-const monitorApiUrl = process.env.MONITOR_API_URL || "http://host.docker.internal:8000"
 const monitorDbPort = +(process.env.MONITOR_DB_PORT || 27017);
 const monitorDatabase = process.env.MONITOR_DATABASE || "cpro";
+const monitorApiUrl = process.env.MONITOR_API_URL
 const monitorSnapshotStrategy = (() => {
   const validStrategies = ['collection', 'gridfs']
   const strategy = process.env.MONGO_SNAPSHOT_STRATEGY || 'collection'
@@ -74,19 +84,22 @@ const httpUser = {
  * @type {CproConfig}
  */
 const cproConfig = {
+  systems: systems,
   connector: {
     adminUser: adminUser,
     httpUser: httpUser,
     environment: environment,
     port: port,
+    systemsFsPath: systemsFsPath,
+    systemsBackupFsPath: systemsBackupFsPath,
+    systemsFactoryFsPath: systemsFactoryFsPath,
     projectsEnabled: projectsEnabled,
     credentialSecret: credentialSecret,
     disableEditor: disableEditor,
     httpNodeRoot: httpNodeRoot,
-    httpOpenapiJson: httpOpenapiJson,
-    httpOpenapiAssets: httpOpenapiAssets,
-    httpOpenapiUi: httpOpenapiUi,
     httpPublicUrl: httpPublicUrl,
+    httpCproSettingsPath: httpCproSettingsPath,
+    httpCproSystemSettingsPath: httpCproSystemSettingsPath,
     externalModulesAllowInstall: externalModulesAllowInstall,
     monitorConfig: {
       httpPath: monitorHttpPath,
@@ -106,6 +119,11 @@ const cproConfig = {
         fsPath: logFsPathWarn
       }
     },
+  },
+  catalogue: {
+    path: httpCproNodeCataloguePath,
+    user: httpCproNodeCatalogueUser,
+    pass: httpCproNodeCataloguePassword
   }
 };
 
@@ -113,7 +131,20 @@ const cproConfig = {
  * @typedef {'prod' | 'integration' | 'staging' | 'qas' | 'dev'} Environment
  *
  * @typedef {Object} CproConfig
+ * @property {SystemConfig} systems
  * @property {ConnectorConfig} connector
+ * @property {CatalogueConfig} catalogue - The path to the HTTP CPRO node catalogue aka the Nexus repository
+ *
+ * @typedef {Object} SystemConfig
+ * @property {SystemEnvironment} [sap]
+ * @property {SystemEnvironment} [shipcloud]
+ *
+ * @typedef {Object} SystemEnvironment
+ * @property {EnvironmentConfig} [dev] - Settings for the development environment
+ * @property {EnvironmentConfig} [qas] - Settings for the QAS environment
+ * @property {EnvironmentConfig} [staging] - Settings for the staging environment
+ * @property {EnvironmentConfig} [integration] - Settings for the integration
+ * @property {EnvironmentConfig} [prod] - Settings for the production environment
  *
  * @typedef {Object} EnvironmentConfig
  * @property {string} url - The URL of the system.
@@ -127,17 +158,24 @@ const cproConfig = {
  * @property {AdminConfig} adminUser
  * @property {UserConfig} httpUser
  * @property {number} port
+ * @property {string} systemsFsPath
+ * @property {string} systemsBackupFsPath
+ * @property {string} systemsFactoryFsPath
  * @property {boolean} projectsEnabled
  * @property {string} credentialSecret
  * @property {boolean} disableEditor
  * @property {string} httpNodeRoot - The root path of the HTTP nodes
- * @property {string} httpOpenapiJson - The path to the HTTP API specification in JSON
- * @property {string} httpOpenapiAssets - The path to the HTTP API specification assets
- * @property {string} httpOpenapiUi - The path to the HTTP UI
- * @property {string} httpPublicUrl - The URL of the HTTP APIs
+ * @property {string} httpPublicUrl - The URL of the HTTP API
+ * @property {string} httpCproSettingsPath - The path to the HTTP CPRO settings
+ * @property {string} httpCproSystemSettingsPath - The path to the HTTP CPRO system settings
  * @property {boolean} externalModulesAllowInstall
  * @property {MonitorConfig} monitorConfig
  * @property {LoggingConfig} loggingConfig
+ *
+ * @typedef {Object} CatalogueConfig
+ * @property {string} path
+ * @property {string} user
+ * @property {string} pass
  *
  * @typedef {Object} MonitorConfig
  * @property {string} httpPath
@@ -147,7 +185,7 @@ const cproConfig = {
  * @property {number} port
  * @property {string} database
  * @property {'collection' | 'gridfs'} snapshotStrategy
- * @property {string} apiUrl
+ * @property {string} monitorApiUrl
  *
  * @typedef {Object} LoggingConfig
  * @property {string} fsPath - Root path of other logging files on local filesystem
